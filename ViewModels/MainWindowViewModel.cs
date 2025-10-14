@@ -1,6 +1,7 @@
-﻿namespace PlannerTool.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public partial class MainWindowViewModel : ViewModelBase
+namespace PlannerTool.ViewModels;
+
+public class MainWindowViewModel : ObservableObject
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
 }
