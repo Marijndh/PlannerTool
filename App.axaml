@@ -4,12 +4,18 @@
              xmlns:local="using:PlannerTool"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-  
+             
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="Styles/Default.axaml"></StyleInclude>
     </Application.Styles>
+             
+    <Application.Resources>
+        <SolidColorBrush x:Key="PrimaryBackground">#E9D9D9</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondaryBackground">#D4D4D4</SolidColorBrush>
+        
+        <FontFamily x:Key="Icons">/Assets/Fonts/Phosphor.ttf#Phosphor</FontFamily>
+        <FontFamily x:Key="IconsBold">/Assets/Fonts/Phosphor-Fill.ttf#Phosphor-Fill</FontFamily>
+        <FontFamily x:Key="Primary">/Assets/Fonts/Kanit-Regular.ttf#Kanit</FontFamily>
+    </Application.Resources>
 </Application>

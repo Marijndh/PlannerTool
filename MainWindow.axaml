@@ -1,9 +1,28 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PlannerTool.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="PlannerTool.MainWindow"
-        Title="PlannerTool">
-    Welcome to Avalonia!
+        xmlns:controls="clr-namespace:PlannerTool.Controls"
+        mc:Ignorable="d" Width="400" Height="600"
+        x:Class="PlannerTool.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="32"
+        FontFamily="{DynamicResource Primary}">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <StackPanel>
+        <controls:TitleBar/>
+        <Border Padding="12" Background="{DynamicResource PrimaryBackground}">
+            <controls:ScrollContainer></controls:ScrollContainer>
+        </Border>
+    </StackPanel>
+
 </Window>
