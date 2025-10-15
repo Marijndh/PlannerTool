@@ -21,7 +21,7 @@
     <StackPanel>
         <controls:TitleBar/>
         <Border Padding="12" Background="{DynamicResource PrimaryBackground}">
-            <controls:ScrollContainer></controls:ScrollContainer>
+            <controls:ProjectContainer></controls:ProjectContainer>
         </Border>
     </StackPanel>
 
