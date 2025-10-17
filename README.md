@@ -1,2 +1,2 @@
 # PlannerTool
-Windows platform based planner tool written using avaloniaui
+Windows platform based planner tool written using avalonia
