@@ -1,6 +1,13 @@
-﻿namespace PlannerTool.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+
+namespace PlannerTool.Models;
 
 public class AddProjectMarker
 {
-    public object AddProject { get; }
+    public IRelayCommand AddProjectCommand { get; }
+    
+    public AddProjectMarker(IRelayCommand addProjectCommand)
+    {
+        AddProjectCommand = addProjectCommand;
+    }
 }

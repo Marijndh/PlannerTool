@@ -10,12 +10,10 @@
         <vm:ProjectViewModel/>
     </Design.DataContext>
     
-    <Grid>
-        <Button HorizontalAlignment="Stretch" Command="{Binding OpenProject}">
+    <Button HorizontalAlignment="Stretch" Command="{Binding OpenProject}">
         <StackPanel Orientation="Horizontal">
             <Label Classes="icon" FontFamily="{DynamicResource IconsBold}" Content="&#xeb9a;"></Label>
             <Label Content="{Binding Title}"/>
         </StackPanel>
-        </Button>
-    </Grid>
+    </Button>
 </UserControl>

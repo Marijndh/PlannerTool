@@ -1,42 +1,48 @@
-using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PlannerTool.Services;
-using System.Collections.ObjectModel;
 using PlannerTool.Models;
+using PlannerTool.Services;
 
 namespace PlannerTool.ViewModels;
 
 public class ProjectContainerViewModel : ViewModelBase
 {
     public ObservableCollection<ProjectViewModel> Projects { get; } = new();
+    
+    public ObservableCollection<object> ProjectsWithAdd { get; } = new();
 
     public IRelayCommand AddProjectCommand { get; }
 
     public ProjectContainerViewModel()
     {
-        // Load projects from DB
-        foreach (var project in DataService.Instance.GetProjects())
-            Projects.Add(new ProjectViewModel(project));
         AddProjectCommand = new RelayCommand(AddProject);
-    }
-    
-    public IEnumerable<object> ProjectsWithAdd
-    {
-        get
-        {
-            foreach (var project in Projects)
-                yield return project;
+        // Load projects from DB
+        foreach (Project project in DataService.Instance.GetProjects())
+            Projects.Add(new ProjectViewModel(project));
 
-            // Always append a special "Add" marker
-            yield return new AddProjectMarker();
-        }
+        AddProjectCommand = new RelayCommand(AddProject);
+
+        // Initialize ProjectsWithAdd
+        RefreshProjectsWithAdd();
+
+        // Subscribe to Projects changes to update ProjectsWithAdd
+        Projects.CollectionChanged += (s, e) => RefreshProjectsWithAdd();
+    }
+
+    private void RefreshProjectsWithAdd()
+    {
+        ProjectsWithAdd.Clear();
+
+        foreach (var project in Projects)
+            ProjectsWithAdd.Add(project);
+
+        ProjectsWithAdd.Add(new AddProjectMarker(AddProjectCommand));
     }
 
     private void AddProject()
     {
-        var newProject = DataService.Instance.AddProject("New Project");
+        Project newProject = DataService.Instance.AddProject("New Project");
         Projects.Add(new ProjectViewModel(newProject));
     }
 }

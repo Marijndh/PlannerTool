@@ -21,10 +21,10 @@
                     <controls:ProjectTab DataContext="{Binding}" Margin="8"/>
                 </DataTemplate>
                 <DataTemplate x:DataType="models:AddProjectMarker">
-                    <Button>
+                    <Button HorizontalAlignment="Stretch" Margin="8, 4, 8, 4" Command="{Binding AddProjectCommand}">
                         <StackPanel Orientation="Horizontal">
-                            <Label Content="+" FontSize="20"/>
-                            <Label Content="Add New Project"/>
+                            <Label Content="+" FontSize="15"/>
+                            <Label Content=". . . . ."/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>
