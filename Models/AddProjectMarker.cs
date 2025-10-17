@@ -2,4 +2,5 @@
 
 public class AddProjectMarker
 {
+    public object AddProject { get; }
 }

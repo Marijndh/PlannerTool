@@ -13,16 +13,14 @@
         FontFamily="{DynamicResource Primary}">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <StackPanel>
+    <Grid RowDefinitions="Auto,*">
         <controls:TitleBar/>
-        <Border Padding="12" Background="{DynamicResource PrimaryBackground}">
-            <controls:ProjectContainer></controls:ProjectContainer>
+        <Border Grid.Row="1" Padding="12" Background="{DynamicResource PrimaryBackground}">
+            <controls:ProjectContainer DataContext="{Binding ProjectContainer}" />
         </Border>
-    </StackPanel>
+    </Grid>
 
 </Window>

@@ -2,15 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:PlannerTool.Controls"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PlannerTool.Controls.ProjectTab"
-             x:DataType="controls:ProjectTab">
+             x:DataType="vm:ProjectViewModel">
+    <Design.DataContext>
+        <vm:ProjectViewModel/>
+    </Design.DataContext>
+    
     <Grid>
-        <Button HorizontalAlignment="Stretch" Click="OpenProject">
+        <Button HorizontalAlignment="Stretch" Command="{Binding OpenProject}">
         <StackPanel Orientation="Horizontal">
             <Label Classes="icon" FontFamily="{DynamicResource IconsBold}" Content="&#xeb9a;"></Label>
-            <Label Content="{Binding Project.Title, RelativeSource={RelativeSource AncestorType=controls:ProjectTab}}"/>
+            <Label Content="{Binding Title}"/>
         </StackPanel>
         </Button>
     </Grid>
