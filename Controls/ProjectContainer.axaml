@@ -4,31 +4,48 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:PlannerTool.Controls"
              xmlns:vm="clr-namespace:PlannerTool.ViewModels"
-             xmlns:models="clr-namespace:PlannerTool.Models"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="PlannerTool.Controls.ProjectContainer"
-             x:DataType="vm:ProjectContainerViewModel">
+             x:DataType="vm:ProjectContainerViewModel"
+             PointerPressed="UserControl_PointerPressed"
+             Focusable="True"
+             >
     
     <Design.DataContext>
         <vm:ProjectContainerViewModel/>
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
         <Label Classes="title" Content="Projects"/>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding ProjectsWithAdd}">
-            <ItemsControl.DataTemplates>
-                <DataTemplate x:DataType="vm:ProjectViewModel">
-                    <controls:ProjectTab DataContext="{Binding}" Margin="8"/>
-                </DataTemplate>
-                <DataTemplate x:DataType="models:AddProjectMarker">
-                    <Button HorizontalAlignment="Stretch" Margin="8, 4, 8, 4" Command="{Binding AddProjectCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="+" FontSize="15"/>
-                            <Label Content=". . . . ."/>
-                        </StackPanel>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.DataTemplates>
-        </ItemsControl>
+
+        <!-- Wrap ItemsControl in ScrollViewer -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Projects}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.DataTemplates>
+                    <!-- Project template -->
+                    <DataTemplate x:DataType="vm:ProjectViewModel">
+                        <controls:ProjectTab DataContext="{Binding}" Margin="8"/>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </ScrollViewer>
+        <Grid Grid.Row="2" ColumnDefinitions="*, Auto" Margin="8,4,8,4" ColumnSpacing="4" >
+            <TextBox HorizontalAlignment="Stretch"  Text="{Binding NewProjectTitle, Mode=TwoWay}" 
+                     Watermark="Enter project name...">
+                <TextBox.KeyBindings>
+                    <KeyBinding Gesture="Enter" 
+                                Command="{Binding AddProject}" 
+                                CommandParameter="{Binding}" />
+                </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" HorizontalAlignment="Center" Content="+" Width="30"
+                    Command="{Binding AddProject}"
+                    CommandParameter="{Binding}" />
+        </Grid>
     </Grid>
 </UserControl>

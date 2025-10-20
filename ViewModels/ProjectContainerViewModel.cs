@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Models;
 using PlannerTool.Services;
@@ -9,40 +9,31 @@ namespace PlannerTool.ViewModels;
 public class ProjectContainerViewModel : ViewModelBase
 {
     public ObservableCollection<ProjectViewModel> Projects { get; } = new();
-    
-    public ObservableCollection<object> ProjectsWithAdd { get; } = new();
 
-    public IRelayCommand AddProjectCommand { get; }
+    private string _newProjectTitle = string.Empty;
+    public string NewProjectTitle
+    {
+        get => _newProjectTitle;
+        set => SetProperty(ref _newProjectTitle, value); // Assuming SetProperty is implemented in ViewModelBase
+    }
+
+    public ICommand AddProjectCommand { get; }
 
     public ProjectContainerViewModel()
     {
-        AddProjectCommand = new RelayCommand(AddProject);
         // Load projects from DB
         foreach (Project project in DataService.Instance.GetProjects())
             Projects.Add(new ProjectViewModel(project));
 
-        AddProjectCommand = new RelayCommand(AddProject);
-
-        // Initialize ProjectsWithAdd
-        RefreshProjectsWithAdd();
-
-        // Subscribe to Projects changes to update ProjectsWithAdd
-        Projects.CollectionChanged += (s, e) => RefreshProjectsWithAdd();
+        AddProjectCommand = new RelayCommand(AddProject, CanAddProject);
     }
 
-    private void RefreshProjectsWithAdd()
-    {
-        ProjectsWithAdd.Clear();
-
-        foreach (var project in Projects)
-            ProjectsWithAdd.Add(project);
-
-        ProjectsWithAdd.Add(new AddProjectMarker(AddProjectCommand));
-    }
+    private bool CanAddProject() => !string.IsNullOrWhiteSpace(NewProjectTitle);
 
     private void AddProject()
     {
-        Project newProject = DataService.Instance.AddProject("New Project");
+        var newProject = DataService.Instance.AddProject(NewProjectTitle);
         Projects.Add(new ProjectViewModel(newProject));
+        NewProjectTitle = string.Empty; // Clear textbox after adding
     }
 }
