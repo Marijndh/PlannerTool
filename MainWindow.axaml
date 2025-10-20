@@ -1,12 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PlannerTool.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:PlannerTool.Controls"
-        mc:Ignorable="d" Width="400" Height="600"
         x:Class="PlannerTool.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        Width="400" Height="600"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="32"
@@ -15,12 +13,21 @@
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-    
+
     <Grid RowDefinitions="Auto,*">
         <controls:TitleBar/>
+
         <Border Grid.Row="1" Padding="12" Background="{DynamicResource PrimaryBackground}">
-            <controls:ProjectContainer DataContext="{Binding ProjectContainer}" />
+            <ContentControl Content="{Binding CurrentViewModel}">
+                <ContentControl.DataTemplates>
+                    <DataTemplate DataType="vm:ProjectContainerViewModel">
+                        <controls:ProjectContainer/>
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:ProjectViewModel">
+                        <controls:ProjectView/>
+                    </DataTemplate>
+                </ContentControl.DataTemplates>
+            </ContentControl>
         </Border>
     </Grid>
-
 </Window>

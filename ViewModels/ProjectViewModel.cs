@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Models;
@@ -8,6 +10,7 @@ public class ProjectViewModel : ViewModelBase
     public IRelayCommand OpenProjectCommand { get; }
     
     private readonly Project _project;
+    private readonly Action<ProjectViewModel>? _openProjectAction;
 
     public int Id => _project.Id;
     public string Title
@@ -23,9 +26,12 @@ public class ProjectViewModel : ViewModelBase
         }
     }
     
-    public ProjectViewModel(Project project)
+    public List<ProjectTask> Tasks => _project.Tasks;
+    
+    public ProjectViewModel(Project project, Action<ProjectViewModel>? openProjectAction = null)
     {
         _project = project;
+        _openProjectAction = openProjectAction;
         OpenProjectCommand = new RelayCommand(OpenProject);
     }
 
@@ -39,8 +45,8 @@ public class ProjectViewModel : ViewModelBase
         OpenProjectCommand = new RelayCommand(OpenProject);
     }
 
-    private void OpenProject()
+    public void OpenProject()
     {
-        throw new System.NotImplementedException();
+        _openProjectAction?.Invoke(this);
     }
 }

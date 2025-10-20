@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -8,22 +9,27 @@ namespace PlannerTool.ViewModels;
 
 public class ProjectContainerViewModel : ViewModelBase
 {
+    private readonly Action<ProjectViewModel> _openProjectAction;
+
     public ObservableCollection<ProjectViewModel> Projects { get; } = new();
 
     private string _newProjectTitle = string.Empty;
     public string NewProjectTitle
     {
         get => _newProjectTitle;
-        set => SetProperty(ref _newProjectTitle, value); // Assuming SetProperty is implemented in ViewModelBase
+        set => SetProperty(ref _newProjectTitle, value);
     }
 
     public ICommand AddProjectCommand { get; }
 
-    public ProjectContainerViewModel()
+    public ProjectContainerViewModel(Action<ProjectViewModel> openProjectAction)
     {
-        // Load projects from DB
+        _openProjectAction = openProjectAction;
+
         foreach (Project project in DataService.Instance.GetProjects())
-            Projects.Add(new ProjectViewModel(project));
+        {
+            Projects.Add(new ProjectViewModel(project, _openProjectAction));
+        }
 
         AddProjectCommand = new RelayCommand(AddProject, CanAddProject);
     }
@@ -33,7 +39,7 @@ public class ProjectContainerViewModel : ViewModelBase
     private void AddProject()
     {
         var newProject = DataService.Instance.AddProject(NewProjectTitle);
-        Projects.Add(new ProjectViewModel(newProject));
-        NewProjectTitle = string.Empty; // Clear textbox after adding
+        Projects.Add(new ProjectViewModel(newProject, _openProjectAction));
+        NewProjectTitle = string.Empty;
     }
 }

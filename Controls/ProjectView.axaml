@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
+             xmlns:controls="clr-namespace:PlannerTool.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PlannerTool.Controls.ProjectView"
+             x:DataType="vm:ProjectViewModel"
+             >
+    <Grid RowDefinitions="Auto,*,Auto">
+    <Label Classes="title" Content="{Binding Title}"/>
+    
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Tasks}">
+                <ItemsControl.DataTemplates>
+                    <!-- Project template -->
+                    <DataTemplate x:DataType="vm:ProjectViewModel">
+                        <controls:TaskTab DataContext="{Binding}" Margin="8"/>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
