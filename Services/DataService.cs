@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 using PlannerTool.Models;
 
 namespace PlannerTool.Services;
@@ -30,7 +31,11 @@ public sealed class DataService
     public List<Project> GetProjects()
     {
         using var db = new DatabaseContext();
-        return db.Projects.ToList();
+        return  db.Projects
+            .Include(p => p.Tasks)
+            .ThenInclude(t => t.SubTasks)
+            .ToList();
+
     }
 
     public void DeleteProject(int projectId)

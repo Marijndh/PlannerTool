@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Models;
@@ -26,13 +27,17 @@ public class ProjectViewModel : ViewModelBase
         }
     }
     
-    public List<ProjectTask> Tasks => _project.Tasks;
+    public ObservableCollection<TaskViewModel> Tasks { get; } = new();
     
     public ProjectViewModel(Project project, Action<ProjectViewModel>? openProjectAction = null)
     {
         _project = project;
         _openProjectAction = openProjectAction;
         OpenProjectCommand = new RelayCommand(OpenProject);
+        foreach (ProjectTask task in project.Tasks)
+        {
+            Tasks.Add(new TaskViewModel(task));
+        }
     }
 
     // Constructor for default project

@@ -11,10 +11,6 @@
              Focusable="True"
              >
     
-    <Design.DataContext>
-        <vm:ProjectContainerViewModel/>
-    </Design.DataContext>
-    
     <Grid RowDefinitions="Auto,*,Auto">
         <Label Classes="title" Content="Projects"/>
         
@@ -28,7 +24,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.DataTemplates>
                     <!-- Project template -->
-                    <DataTemplate x:DataType="vm:ProjectViewModel">
+                    <DataTemplate DataType="vm:ProjectViewModel">
                         <controls:ProjectTab DataContext="{Binding}" Margin="8"/>
                     </DataTemplate>
                 </ItemsControl.DataTemplates>

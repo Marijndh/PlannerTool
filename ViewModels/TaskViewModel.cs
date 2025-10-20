@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using PlannerTool.Models;
 
@@ -16,6 +18,19 @@ public class TaskViewModel : ViewModelBase
             if (_task.Title != value)
             {
                 _task.Title = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    
+    public ObservableCollection<ProjectTask> SubTasks
+    {
+        get => new (_task.SubTasks);
+        set
+        {
+            if (_task.SubTasks != value.ToList())
+            {
+                _task.SubTasks = value.ToList();
                 OnPropertyChanged();
             }
         }

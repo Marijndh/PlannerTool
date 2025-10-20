@@ -2,7 +2,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PlannerTool.Controls.TaskTab">
-    Welcome to Avalonia!
+             x:Class="PlannerTool.Controls.TaskTab"
+             x:DataType="vm:TaskViewModel">
+    <Grid RowDefinitions="Auto, *">
+    <Label Classes="title" Content="{Binding Title}"/>
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding SubTasks}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Title}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</Grid>
 </UserControl>

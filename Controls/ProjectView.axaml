@@ -9,14 +9,13 @@
              x:DataType="vm:ProjectViewModel"
              >
     <Grid RowDefinitions="Auto,*,Auto">
-    <Label Classes="title" Content="{Binding Title}"/>
-    
+        <Label Classes="title" Content="{Binding Title}"/>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Tasks}">
                 <ItemsControl.DataTemplates>
-                    <!-- Project template -->
-                    <DataTemplate x:DataType="vm:ProjectViewModel">
-                        <controls:TaskTab DataContext="{Binding}" Margin="8"/>
+                    <!-- Task template -->
+                    <DataTemplate DataType="vm:TaskViewModel">
+                        <controls:TaskTab DataContext="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.DataTemplates>
             </ItemsControl>

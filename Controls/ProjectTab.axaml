@@ -6,9 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PlannerTool.Controls.ProjectTab"
              x:DataType="vm:ProjectViewModel">
-    <Design.DataContext>
-        <vm:ProjectViewModel/>
-    </Design.DataContext>
     
     <Button HorizontalAlignment="Stretch" Command="{Binding OpenProject}">
         <StackPanel Orientation="Horizontal">
