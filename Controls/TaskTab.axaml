@@ -6,16 +6,28 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PlannerTool.Controls.TaskTab"
              x:DataType="vm:TaskViewModel">
-    <Grid RowDefinitions="Auto, *">
-    <Label Classes="title" Content="{Binding Title}"/>
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-        <ItemsControl ItemsSource="{Binding SubTasks}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Label Content="{Binding Title}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </ScrollViewer>
-</Grid>
+
+        <Grid RowDefinitions="Auto, *" >
+            <Border Grid.Row="0" CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="8">
+                <Grid ColumnDefinitions="Auto, *, Auto">
+                    <Button
+                        Content="{Binding ShowSubTasksButtonContent}"
+                        Classes="titleBarButton"
+                        Command="{Binding ShowSubTasksCommand}"
+                        IsVisible="{Binding HasSubTasks}"/>
+                    <TextBox Grid.Column="1" Text="{Binding Title}" />
+                    <Button Grid.Column="2" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xe4a6;" Command="{Binding DeleteTask}"></Button>
+                </Grid>
+            </Border>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding ShowSubTasks}">
+                <ItemsControl ItemsSource="{Binding SubTasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Title}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+   
 </UserControl>

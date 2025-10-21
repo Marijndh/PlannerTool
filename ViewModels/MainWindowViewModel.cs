@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace PlannerTool.ViewModels;
@@ -9,9 +10,18 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(CanClosePage))]
     private ViewModelBase _currentViewModel;
 
-    public ProjectContainerViewModel ProjectContainer { get; }
+    private ProjectContainerViewModel ProjectContainer { get; }
 
     public IRelayCommand CloseProjectCommand { get; }
+    public IRelayCommand CloseWindowCommand { get; }
+    
+    public event Action? RequestClose;
+
+    [RelayCommand]
+    private void Close()
+    {
+        RequestClose?.Invoke();
+    }
     
     public bool CanClosePage => CurrentViewModel != ProjectContainer;
 
@@ -21,6 +31,11 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentViewModel = ProjectContainer;
 
         CloseProjectCommand = new RelayCommand(CloseProject);
+        CloseWindowCommand = new RelayCommand(() =>
+        {
+            OnClosing();
+            Close();
+        });
     }
 
     private void OpenProject(ProjectViewModel project)
@@ -30,6 +45,17 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void CloseProject()
     {
+        OnClosing();
         CurrentViewModel = ProjectContainer;
+    }
+    
+    public bool OnClosing()
+    {
+        if (CurrentViewModel is ProjectViewModel projectVm)
+        {
+            projectVm.SaveProject(); 
+        }
+
+        return true;
     }
 }

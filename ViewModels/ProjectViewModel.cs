@@ -1,19 +1,23 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Models;
+using PlannerTool.Services;
 
 namespace PlannerTool.ViewModels;
 public class ProjectViewModel : ViewModelBase
 {
-    public IRelayCommand OpenProjectCommand { get; }
-    
+   
     private readonly Project _project;
     private readonly Action<ProjectViewModel>? _openProjectAction;
-
+    
     public int Id => _project.Id;
+    
+    private string _newTaskTitle = string.Empty;
+    public string NewTaskTitle
+    {
+        get => _newTaskTitle;
+        set => SetProperty(ref _newTaskTitle, value);
+    }
     public string Title
     {
         get => _project.Title;
@@ -33,25 +37,50 @@ public class ProjectViewModel : ViewModelBase
     {
         _project = project;
         _openProjectAction = openProjectAction;
-        OpenProjectCommand = new RelayCommand(OpenProject);
         foreach (ProjectTask task in project.Tasks)
         {
-            Tasks.Add(new TaskViewModel(task));
+            Tasks.Add(new TaskViewModel(task, DeleteTask));
         }
-    }
-
-    // Constructor for default project
-    public ProjectViewModel()
-    {
-        _project = new Project
-        {
-            Title = "New Project"
-        };
-        OpenProjectCommand = new RelayCommand(OpenProject);
     }
 
     public void OpenProject()
     {
         _openProjectAction?.Invoke(this);
     }
+    
+    public void AddTask()
+    {
+        ProjectTask newTask = new ProjectTask {Title = NewTaskTitle};
+        Tasks.Add(new TaskViewModel(newTask, DeleteTask));
+        NewTaskTitle = string.Empty;
+    }
+
+    private void DeleteTask(ProjectTask task)
+    {
+        TaskViewModel? taskViewModel = null;
+        foreach (TaskViewModel t in Tasks)
+        {
+            if (t.Id == task.Id)
+            {
+                taskViewModel = t;
+                break;
+            }
+        }
+        if (taskViewModel != null)
+        {
+            Tasks.Remove(taskViewModel);
+        }
+        OnPropertyChanged(nameof(Tasks));
+    }
+
+    public void SaveProject()
+    {
+        _project.Tasks.Clear();
+        foreach (TaskViewModel taskVm in Tasks)
+        {
+            if (taskVm.Task != null) _project.Tasks.Add(taskVm.Task);
+        }
+        DataService.Instance.SaveProject(_project);
+    }
+    
 }

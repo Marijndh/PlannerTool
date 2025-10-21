@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PlannerTool.ViewModels"
         xmlns:controls="clr-namespace:PlannerTool.Controls"
-        x:Class="PlannerTool.Views.MainWindow"
+        x:Class="PlannerTool.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Width="400" Height="600"
         ExtendClientAreaToDecorationsHint="True"

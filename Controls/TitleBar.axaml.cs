@@ -1,10 +1,6 @@
-﻿using System.Windows.Input;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.Input;
+using PlannerTool.ViewModels;
 
 namespace PlannerTool.Controls;
 
@@ -25,10 +21,5 @@ public partial class TitleBar : UserControl
         {
             window.WindowState = WindowState.Minimized;
         }
-    }
-
-    private void OnCloseClick(object? sender, RoutedEventArgs e)
-    {
-        (VisualRoot as Window)?.Close();
     }
 }

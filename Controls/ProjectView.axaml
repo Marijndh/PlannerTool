@@ -8,17 +8,33 @@
              x:Class="PlannerTool.Controls.ProjectView"
              x:DataType="vm:ProjectViewModel"
              >
-    <Grid RowDefinitions="Auto,*,Auto">
-        <Label Classes="title" Content="{Binding Title}"/>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBox Classes="title" Text="{Binding Title}"/>
+        <!-- Separator line -->
+        <Border Grid.Row="1" Height="2" Background="Gray" Margin="0,8"/>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Tasks}">
                 <ItemsControl.DataTemplates>
                     <!-- Task template -->
                     <DataTemplate DataType="vm:TaskViewModel">
-                        <controls:TaskTab DataContext="{Binding}"/>
+                        <controls:TaskTab DataContext="{Binding}" Margin="4"/>
                     </DataTemplate>
                 </ItemsControl.DataTemplates>
             </ItemsControl>
         </ScrollViewer>
+        <!-- Add new Task -->
+        <Grid Grid.Row="3" ColumnDefinitions="*, Auto" Margin="8,4,8,4" ColumnSpacing="4" >
+            <TextBox HorizontalAlignment="Stretch"  Text="{Binding NewTaskTitle, Mode=TwoWay}" 
+                     Watermark="Enter task name...">
+                <TextBox.KeyBindings>
+                    <KeyBinding Gesture="Enter" 
+                                Command="{Binding AddTask}" 
+                                CommandParameter="{Binding}" />
+                </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" HorizontalAlignment="Center" Content="+" Width="30"
+                    Command="{Binding AddTask}"
+                    CommandParameter="{Binding}" />
+        </Grid>
     </Grid>
 </UserControl>

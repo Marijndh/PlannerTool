@@ -11,8 +11,8 @@ public class DatabaseContext : DbContext
 
     public DatabaseContext()
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
+        Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
+        string path = Environment.GetFolderPath(folder);
         DbPath = System.IO.Path.Join(path, "plannertool.db");
     }
 
@@ -21,5 +21,18 @@ public class DatabaseContext : DbContext
     {
         options.UseSqlite($"Data Source={DbPath}")
             .LogTo(Console.WriteLine, LogLevel.Information);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Project>()
+            .HasMany(p => p.Tasks)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProjectTask>()
+            .HasMany(t => t.SubTasks)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
