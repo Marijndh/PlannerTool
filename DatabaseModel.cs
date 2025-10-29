@@ -7,7 +7,7 @@ public class DatabaseContext : DbContext
 {
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectTask> ProjectTasks { get; set; }
-    public string DbPath { get; }
+    private string DbPath { get; }
 
     public DatabaseContext()
     {
@@ -35,4 +35,7 @@ public class DatabaseContext : DbContext
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
     }
+    
+    //dotnet ef migrations add 
+    //dotnet ef database update
 }

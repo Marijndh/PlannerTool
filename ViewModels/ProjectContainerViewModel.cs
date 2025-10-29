@@ -38,7 +38,7 @@ public class ProjectContainerViewModel : ViewModelBase
 
     private void AddProject()
     {
-        var newProject = DataService.Instance.AddProject(NewProjectTitle);
+        Project newProject = DataService.Instance.AddProject(NewProjectTitle);
         Projects.Add(new ProjectViewModel(newProject, _openProjectAction));
         NewProjectTitle = string.Empty;
     }

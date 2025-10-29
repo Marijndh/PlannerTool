@@ -49,13 +49,11 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentViewModel = ProjectContainer;
     }
     
-    public bool OnClosing()
+    private void OnClosing()
     {
         if (CurrentViewModel is ProjectViewModel projectVm)
         {
             projectVm.SaveProject(); 
         }
-
-        return true;
     }
 }

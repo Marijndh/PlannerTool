@@ -59,7 +59,7 @@ public sealed class DataService
         foreach (ProjectTask task in deletedTasks)
             db.ProjectTasks.Remove(task);
 
-        // Add or update tasks
+        // Add or update tasks and subtasks
         foreach (ProjectTask newTask in updatedProject.Tasks)
         {
             ProjectTask? existingTask = existingProject.Tasks.FirstOrDefault(t => t.Id == newTask.Id);
