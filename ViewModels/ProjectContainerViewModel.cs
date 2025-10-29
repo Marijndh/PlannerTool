@@ -12,7 +12,7 @@ public partial class ProjectContainerViewModel : ViewModelBase
 {
     private readonly Action<ProjectViewModel> _openProjectAction;
     
-    private Action<ProjectViewModel> _deleteProjectAction => DeleteProject;
+    private Action<ProjectViewModel> DeleteProjectAction => DeleteProject;
 
     [ObservableProperty] 
     private ObservableCollection<ProjectViewModel> _projects;
@@ -35,7 +35,7 @@ public partial class ProjectContainerViewModel : ViewModelBase
 
         foreach (Project project in DataService.Instance.GetProjects())
         {
-            Projects.Add(new ProjectViewModel(project, _openProjectAction, _deleteProjectAction));
+            Projects.Add(new ProjectViewModel(project, _openProjectAction, DeleteProjectAction));
         }
     }
 
@@ -44,7 +44,7 @@ public partial class ProjectContainerViewModel : ViewModelBase
     public void AddProject()
     {
         Project newProject = DataService.Instance.AddProject(NewProjectTitle);
-        Projects.Add(new ProjectViewModel(newProject, _openProjectAction, _deleteProjectAction));
+        Projects.Add(new ProjectViewModel(newProject, _openProjectAction, DeleteProjectAction));
         NewProjectTitle = string.Empty;
     }
     

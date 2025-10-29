@@ -107,11 +107,13 @@ public sealed class DataService
             ProjectTask? existingSub = existingTask.SubTasks.FirstOrDefault(st => st.Id == newSub.Id);
             if (existingSub == null)
             {
-                existingTask.SubTasks.Add(new ProjectTask { Title = newSub.Title });
+                existingTask.SubTasks.Add(new ProjectTask { Title = newSub.Title, State = newSub.State, Deadline = newSub.Deadline });
             }
             else
             {
                 existingSub.Title = newSub.Title;
+                existingSub.State = newSub.State;
+                existingSub.Deadline = newSub.Deadline;
             }
         }
     }

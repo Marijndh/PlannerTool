@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -18,8 +20,11 @@ public partial class TaskViewModel : ViewModelBase
 {
     private readonly ProjectTask _task;
     private readonly Action<ProjectTask> _deleteTaskAction;
+    public IRelayCommand ShowSubTasksCommand { get; }
 
     public ProjectTask Task => _task;
+
+    private bool _isSubTask;
 
     public int Id => _task.Id;
 
@@ -35,6 +40,9 @@ public partial class TaskViewModel : ViewModelBase
     
     [ObservableProperty]
     private DateTime? _deadline;
+    
+    [ObservableProperty]
+    private string _progressText;
 
     // When SubTasks changes, automatically notify that HasSubTasks and Padding changed.
     [ObservableProperty]
@@ -45,17 +53,18 @@ public partial class TaskViewModel : ViewModelBase
     public bool HasSubTasks => SubTasks.Count > 0;
 
     public string ShowSubTasksButtonContent => ShowSubTasks ? "↑" : "↓";
+    
+    private int CompletedSubTasks => SubTasks.Count(t => t.State == CompletionState.Completed);
 
     public Thickness Padding => HasSubTasks ? new Thickness(0, 8, 8, 8) : new Thickness(8);
     
     public IBrush StateColor => GetStateColor();
-
-    public IRelayCommand ShowSubTasksCommand { get; }
-
-    public TaskViewModel(ProjectTask task, Action<ProjectTask> deleteTaskAction)
+    
+    public TaskViewModel(ProjectTask task, Action<ProjectTask> deleteTaskAction, bool isSubTask = false)
     {
         _task = task;
         _deleteTaskAction = deleteTaskAction;
+        _isSubTask = isSubTask;
 
         Title = task.Title;
         State = task.State;
@@ -66,13 +75,17 @@ public partial class TaskViewModel : ViewModelBase
             OnPropertyChanged(nameof(HasSubTasks));
             OnPropertyChanged(nameof(Padding));
         };
-
-        ShowSubTasksCommand = new RelayCommand(ToggleSubtasks);
-
-        foreach (TaskViewModel subTaskViewModel in _task.SubTasks.Select(subTask => new TaskViewModel(subTask, DeleteSubTask)))
+        
+        foreach (TaskViewModel subTaskViewModel in _task.SubTasks.Select(subTask => new TaskViewModel(subTask, DeleteSubTask, true)))
         {
+            subTaskViewModel.PropertyChanged += SubTaskPropertyChanged;
             SubTasks.Add(subTaskViewModel);
         }
+        SubTasks.CollectionChanged += SubTasksOnCollectionChanged;
+        
+        ShowSubTasksCommand = new RelayCommand(ToggleSubtasks);
+        
+        UpdateProgress();
     }
 
     private void ToggleSubtasks()
@@ -128,6 +141,30 @@ public partial class TaskViewModel : ViewModelBase
             _task.Deadline = null;
         }
     }
+    private void SubTasksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+        {
+            foreach (TaskViewModel task in e.NewItems)
+                task.PropertyChanged += SubTaskPropertyChanged;
+        }
+
+        if (e.OldItems != null)
+        {
+            foreach (TaskViewModel task in e.OldItems)
+                task.PropertyChanged -= SubTaskPropertyChanged;
+        }
+
+        UpdateProgress();
+    }
+    
+    private void SubTaskPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(State))
+        {
+            UpdateProgress();
+        }
+    }
 
     public void ChangeState()
     {
@@ -153,4 +190,27 @@ public partial class TaskViewModel : ViewModelBase
                 return Brushes.Gray;
         }
     }
+    
+    private void UpdateProgress()
+    {
+        if (HasSubTasks)
+        {
+            ProgressText = $"{CompletedSubTasks}/{SubTasks.Count}";
+
+            // Update State based on completed subtasks
+            if (CompletedSubTasks == 0)
+            {
+                State = CompletionState.NotStarted;
+            }
+            else if (CompletedSubTasks == SubTasks.Count)
+            {
+                State = CompletionState.Completed;
+            }
+            else
+            {
+                State = CompletionState.InProgress;
+            }
+        }
+    }
+
 }

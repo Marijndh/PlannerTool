@@ -39,11 +39,12 @@ public partial class ProjectViewModel : ViewModelBase
     private IBrush _progressColor;
     
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasTasks))]
     private bool _deleteEnabled;
     
     private int CompletedTasks => Tasks.Count(t => t.State == CompletionState.Completed);
     
-    public bool HasTasks => Tasks.Count > 0;
+    public bool HasTasks => Tasks.Count > 0 && !DeleteEnabled;
 
     public ProjectViewModel(Project project,
         Action<ProjectViewModel> openProjectAction,  Action<ProjectViewModel> deleteProjectAction)
@@ -153,7 +154,7 @@ public partial class ProjectViewModel : ViewModelBase
 
         if (CompletedTasks == Tasks.Count)
             ProgressColor = Brushes.Green;
-        else if (CompletedTasks > half)
+        else if (CompletedTasks >= half)
             ProgressColor = Brushes.Orange;
         else
             ProgressColor = Brushes.Red;

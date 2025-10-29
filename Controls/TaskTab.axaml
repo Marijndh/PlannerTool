@@ -51,6 +51,7 @@
                     </Button>
                     <Button Grid.Column="2"
                             Command="{Binding ChangeState}"
+                            IsVisible="{Binding !HasSubTasks}"
                             Background="Transparent"
                             BorderThickness="0"
                             Padding="0"
@@ -60,6 +61,12 @@
                                  Height="16"
                                  Fill="{Binding StateColor}" />
                     </Button>
+                    <Label Grid.Column="2"
+                            IsVisible="{Binding HasSubTasks}"
+                            Background="Transparent"
+                            VerticalAlignment="Center"
+                            Content="{Binding ProgressText}"
+                    />
                 </Grid>
             </Border>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding ShowSubTasks}">
@@ -67,9 +74,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="8" Margin="16,4,0,0">
-                                <Grid ColumnDefinitions="Auto, *, Auto, Auto">
+                                <Grid ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="4">
                                     <TextBox Grid.Column="0" FontSize="12" Text="{Binding Title}" />
-                                    <Button Grid.Column="2" FontSize="16"
+                                    <Button Grid.Column="1" FontSize="16"
                                             Content="&#xE492;"
                                             FontFamily="{DynamicResource Icons}"
                                     >
@@ -81,10 +88,21 @@
                                             </Flyout>
                                         </Button.Flyout>    
                                     </Button>
-                                    <Button Grid.Column="3" FontSize="16" FontFamily="{DynamicResource Icons}" 
+                                    <Button Grid.Column="2" FontSize="16" FontFamily="{DynamicResource Icons}" 
                                             Content="&#xe4a6;"   
                                             Command="{Binding DeleteTask }"
                                             CommandParameter="{Binding}"></Button>
+                                    <Button Grid.Column="3"
+                                            Command="{Binding ChangeState}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                        <Ellipse Width="16"
+                                                 Height="16"
+                                                 Fill="{Binding StateColor}" />
+                                    </Button>
                                 </Grid>
                             </Border>
                         </DataTemplate>
