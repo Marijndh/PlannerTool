@@ -2,8 +2,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PlannerTool.Enums;
 using PlannerTool.Models;
 using PlannerTool.Services;
 
@@ -24,6 +26,10 @@ public partial class TaskViewModel : ViewModelBase
     [ObservableProperty]
     private bool _showSubTasks;
 
+    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(StateColor))]
+    private CompletionState _state;
+
     // When SubTasks changes, automatically notify that HasSubTasks and Padding changed.
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSubTasks))]
@@ -35,6 +41,8 @@ public partial class TaskViewModel : ViewModelBase
     public string ShowSubTasksButtonContent => ShowSubTasks ? "↑" : "↓";
 
     public Thickness Padding => HasSubTasks ? new Thickness(0, 8, 8, 8) : new Thickness(8);
+    
+    public IBrush StateColor => GetStateColor();
 
     public IRelayCommand ShowSubTasksCommand { get; }
 
@@ -44,6 +52,7 @@ public partial class TaskViewModel : ViewModelBase
         _deleteTaskAction = deleteTaskAction;
 
         Title = task.Title;
+        State = task.State;
         
         SubTasks.CollectionChanged += (_, _) =>
         {
@@ -92,5 +101,35 @@ public partial class TaskViewModel : ViewModelBase
     partial void OnTitleChanged(string value)
     {
         if (value != _task.Title) _task.Title = value;
+    }
+    
+    partial void OnStateChanged(CompletionState value)
+    {
+        if (value != _task.State) _task.State = value;
+    }
+
+    public void ChangeState()
+    {
+        State = State switch
+        {
+            CompletionState.NotStarted => CompletionState.InProgress,
+            CompletionState.InProgress => CompletionState.Completed,
+            _ => CompletionState.NotStarted
+        };
+    }
+    
+    private IBrush GetStateColor()
+    {
+        switch (State)
+        {
+            case CompletionState.NotStarted:
+                return Brushes.Red;
+            case CompletionState.InProgress:
+                return Brushes.Orange;
+            case CompletionState.Completed:
+                return Brushes.Green;
+            default:
+                return Brushes.Gray;
+        }
     }
 }

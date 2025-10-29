@@ -9,15 +9,31 @@
 
         <Grid RowDefinitions="Auto, *" >
             <Border Grid.Row="0" CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="{Binding Padding}">
-                <Grid ColumnDefinitions="Auto,Auto, *, Auto, Auto">
-                    <Button Grid.Column="0"
-                            Content="{Binding ShowSubTasksButtonContent}"
-                            Classes="titleBarButton"
-                            Command="{Binding ShowSubTasksCommand}"
-                            IsVisible="{Binding HasSubTasks}"/>
-                    <TextBox Grid.Column="2" Text="{Binding Title}" />
-                    <Button Grid.Column="3" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xe4a6;" Command="{Binding DeleteTask}"></Button>
-                    <Button Grid.Column="4" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xE3D4;" Command="{Binding AddSubTask}"></Button>
+                <Grid ColumnDefinitions="*, Auto, Auto,Auto" ColumnSpacing="4">
+                    <Grid Grid.Column="0"
+                          ColumnDefinitions="Auto, *"
+                          ColumnSpacing="0">
+                        <Button Grid.Column="0"
+                                Content="{Binding ShowSubTasksButtonContent}"
+                                Classes="titleBarButton"
+                                Command="{Binding ShowSubTasksCommand}"
+                                IsVisible="{Binding HasSubTasks}" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding Title}" />
+                    </Grid>
+                    <Button Grid.Column="1" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xe4a6;" Command="{Binding DeleteTask}"></Button>
+                    <Button Grid.Column="2" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xE3D4;" Command="{Binding AddSubTask}"></Button>
+                    <Button Grid.Column="3"
+                            Command="{Binding ChangeState}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                        <Ellipse Width="16"
+                                 Height="16"
+                                 Fill="{Binding StateColor}" />
+                    </Button>
                 </Grid>
             </Border>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding ShowSubTasks}">
