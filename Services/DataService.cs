@@ -91,6 +91,8 @@ public sealed class DataService
     private static void UpdateExistingTask(DatabaseContext db, ProjectTask existingTask, ProjectTask newTask)
     {
         existingTask.Title = newTask.Title;
+        existingTask.State = newTask.State;
+        existingTask.Deadline = newTask.Deadline;
 
         // Remove deleted subtasks
         List<ProjectTask> deletedSubs = existingTask.SubTasks
