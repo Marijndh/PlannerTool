@@ -2,6 +2,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -81,6 +84,7 @@ public partial class TaskViewModel : ViewModelBase
 
         SubTasks.Add(subTaskViewModel);
         _task.SubTasks.Add(subTask);
+        if (!ShowSubTasks) ToggleSubtasks();
     }
 
     private void DeleteSubTask(ProjectTask task)
