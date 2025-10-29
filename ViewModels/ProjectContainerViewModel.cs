@@ -1,45 +1,67 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Models;
 using PlannerTool.Services;
 
 namespace PlannerTool.ViewModels;
 
-public class ProjectContainerViewModel : ViewModelBase
+public partial class ProjectContainerViewModel : ViewModelBase
 {
     private readonly Action<ProjectViewModel> _openProjectAction;
+    
+    private Action<ProjectViewModel> _deleteProjectAction => DeleteProject;
 
-    public ObservableCollection<ProjectViewModel> Projects { get; } = new();
+    [ObservableProperty] 
+    private ObservableCollection<ProjectViewModel> _projects;
 
-    private string _newProjectTitle = string.Empty;
-    public string NewProjectTitle
-    {
-        get => _newProjectTitle;
-        set => SetProperty(ref _newProjectTitle, value);
-    }
+    [ObservableProperty]
+    private string _newProjectTitle;
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ModeIcon))]
+    private bool _deleteEnabled;
 
-    public ICommand AddProjectCommand { get; }
+    public string ModeIcon => DeleteEnabled ? "\xEBA6" : "\xE4A6";
 
     public ProjectContainerViewModel(Action<ProjectViewModel> openProjectAction)
     {
+        NewProjectTitle = string.Empty;
         _openProjectAction = openProjectAction;
+        Projects = new ObservableCollection<ProjectViewModel>();
+        DeleteEnabled = false;
 
         foreach (Project project in DataService.Instance.GetProjects())
         {
-            Projects.Add(new ProjectViewModel(project, _openProjectAction));
+            Projects.Add(new ProjectViewModel(project, _openProjectAction, _deleteProjectAction));
         }
-
-        AddProjectCommand = new RelayCommand(AddProject, CanAddProject);
     }
 
     private bool CanAddProject() => !string.IsNullOrWhiteSpace(NewProjectTitle);
 
-    private void AddProject()
+    public void AddProject()
     {
         Project newProject = DataService.Instance.AddProject(NewProjectTitle);
-        Projects.Add(new ProjectViewModel(newProject, _openProjectAction));
+        Projects.Add(new ProjectViewModel(newProject, _openProjectAction, _deleteProjectAction));
         NewProjectTitle = string.Empty;
+    }
+    
+    private void DeleteProject(ProjectViewModel projectVm)
+    {
+        DataService.Instance.DeleteProject(projectVm.Id);
+        Projects.Remove(projectVm);
+    }
+    
+    public void ChangeMode()
+    {
+        DeleteEnabled = !DeleteEnabled;
+    }
+
+    partial void OnDeleteEnabledChanged(bool value)
+    {
+        foreach (ProjectViewModel project in Projects)
+            project.DeleteEnabled = value;
     }
 }

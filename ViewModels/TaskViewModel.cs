@@ -32,6 +32,9 @@ public partial class TaskViewModel : ViewModelBase
     [ObservableProperty] 
     [NotifyPropertyChangedFor(nameof(StateColor))]
     private CompletionState _state;
+    
+    [ObservableProperty]
+    private DateTime? _deadline;
 
     // When SubTasks changes, automatically notify that HasSubTasks and Padding changed.
     [ObservableProperty]
@@ -56,6 +59,7 @@ public partial class TaskViewModel : ViewModelBase
 
         Title = task.Title;
         State = task.State;
+        Deadline = task.Deadline?.DateTime ?? null;
         
         SubTasks.CollectionChanged += (_, _) =>
         {
@@ -110,6 +114,19 @@ public partial class TaskViewModel : ViewModelBase
     partial void OnStateChanged(CompletionState value)
     {
         if (value != _task.State) _task.State = value;
+    }
+
+    partial void OnDeadlineChanged(DateTime? value)
+    {
+        if (value != null)
+        {
+            DateTime localDateTime = DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
+            _task.Deadline = new DateTimeOffset(localDateTime);
+        }
+        else
+        {
+            _task.Deadline = null;
+        }
     }
 
     public void ChangeState()

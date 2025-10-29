@@ -31,18 +31,23 @@
             </ItemsControl>
         </ScrollViewer>
         <!-- Add new project -->
-        <Grid Grid.Row="2" ColumnDefinitions="*, Auto" Margin="8,4,8,4" ColumnSpacing="4" >
-            <TextBox HorizontalAlignment="Stretch"  Text="{Binding NewProjectTitle, Mode=TwoWay}" 
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,*, Auto" Margin="0,4,0,4" ColumnSpacing="4" >
+            <Button FontSize="20"
+                    Content="{Binding ModeIcon}"
+                    FontFamily="{DynamicResource Icons}"
+                    Command="{Binding ChangeMode}" 
+            />
+            <TextBox Grid.Column="1" HorizontalAlignment="Stretch"  Text="{Binding NewProjectTitle, Mode=TwoWay}" 
                      Watermark="Enter project name...">
                 <TextBox.KeyBindings>
                     <KeyBinding Gesture="Enter" 
-                                Command="{Binding AddProject}" 
-                                CommandParameter="{Binding}" />
+                                Command="{Binding AddProject}" />
                 </TextBox.KeyBindings>
             </TextBox>
-            <Button Grid.Column="1" HorizontalAlignment="Center" Content="+" Width="30"
-                    Command="{Binding AddProject}"
-                    CommandParameter="{Binding}" />
+            <Button Grid.Column="2" FontSize="20"
+                    Content="&#xE3D4;" 
+                    FontFamily="{DynamicResource Icons}"
+                    Command="{Binding AddProject}"/>
         </Grid>
     </Grid>
 </UserControl>
