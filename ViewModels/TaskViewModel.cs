@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlannerTool.Enums;
@@ -24,8 +25,6 @@ public partial class TaskViewModel : ViewModelBase
 
     public ProjectTask Task => _task;
 
-    private bool _isSubTask;
-
     public int Id => _task.Id;
 
     [ObservableProperty]
@@ -39,6 +38,8 @@ public partial class TaskViewModel : ViewModelBase
     private CompletionState _state;
     
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DeadlineColor))]
+    [NotifyPropertyChangedFor(nameof(HasDeadline))]
     private DateTime? _deadline;
     
     [ObservableProperty]
@@ -47,24 +48,24 @@ public partial class TaskViewModel : ViewModelBase
     // When SubTasks changes, automatically notify that HasSubTasks and Padding changed.
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSubTasks))]
-    [NotifyPropertyChangedFor(nameof(Padding))]
     private ObservableCollection<TaskViewModel> _subTasks = new();
 
     public bool HasSubTasks => SubTasks.Count > 0;
-
-    public string ShowSubTasksButtonContent => ShowSubTasks ? "↑" : "↓";
+    
+    public bool HasDeadline => Deadline != null;
     
     private int CompletedSubTasks => SubTasks.Count(t => t.State == CompletionState.Completed);
-
-    public Thickness Padding => HasSubTasks ? new Thickness(0, 8, 8, 8) : new Thickness(8);
     
     public IBrush StateColor => GetStateColor();
+    public IBrush DeadlineColor => GetDeadlineColor();
+    public string DeadlineCountdown => GetDeadlineCountdown();
+
+    private readonly DispatcherTimer _deadlineTimer;
     
-    public TaskViewModel(ProjectTask task, Action<ProjectTask> deleteTaskAction, bool isSubTask = false)
+    public TaskViewModel(ProjectTask task, Action<ProjectTask> deleteTaskAction)
     {
         _task = task;
         _deleteTaskAction = deleteTaskAction;
-        _isSubTask = isSubTask;
 
         Title = task.Title;
         State = task.State;
@@ -73,10 +74,9 @@ public partial class TaskViewModel : ViewModelBase
         SubTasks.CollectionChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(HasSubTasks));
-            OnPropertyChanged(nameof(Padding));
         };
         
-        foreach (TaskViewModel subTaskViewModel in _task.SubTasks.Select(subTask => new TaskViewModel(subTask, DeleteSubTask, true)))
+        foreach (TaskViewModel subTaskViewModel in _task.SubTasks.Select(subTask => new TaskViewModel(subTask, DeleteSubTask)))
         {
             subTaskViewModel.PropertyChanged += SubTaskPropertyChanged;
             SubTasks.Add(subTaskViewModel);
@@ -85,13 +85,19 @@ public partial class TaskViewModel : ViewModelBase
         
         ShowSubTasksCommand = new RelayCommand(ToggleSubtasks);
         
+        _deadlineTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(1)
+        };
+        _deadlineTimer.Tick += (_, _) => OnPropertyChanged(nameof(DeadlineCountdown));
+        _deadlineTimer.Start();
+        
         UpdateProgress();
     }
 
     private void ToggleSubtasks()
     {
         ShowSubTasks = !ShowSubTasks;
-        OnPropertyChanged(nameof(ShowSubTasksButtonContent));
     }
 
     public void AddSubTask()
@@ -189,6 +195,47 @@ public partial class TaskViewModel : ViewModelBase
             default:
                 return Brushes.Gray;
         }
+    }
+    
+    private IBrush GetDeadlineColor()
+    {
+        if (Deadline == null)
+            return Brushes.Gray;
+
+        var diff = Deadline.Value - DateTime.Now;
+
+        if (diff.TotalSeconds < 0)
+            return Brushes.DarkRed;
+
+        switch (diff.TotalDays)
+        {
+            case < 1:
+                return Brushes.Red;
+            case < 7:
+                return Brushes.DarkGoldenrod;
+            default:
+                return Brushes.Gray;
+        }
+    }
+    
+    private string GetDeadlineCountdown()
+    {
+        if (Deadline == null)
+            return "No deadline set";
+
+        var diff = Deadline.Value - DateTime.Now;
+
+        if (diff.TotalSeconds < 0)
+            return "Deadline passed";
+
+        if (diff.TotalDays >= 1)
+            return $"{(int)diff.TotalDays} days left";
+        if (diff.TotalHours >= 1)
+            return $"{(int)diff.TotalHours} hours left";
+        if (diff.TotalMinutes >= 1)
+            return $"{(int)diff.TotalMinutes} minutes left";
+
+        return "Less than a minute left";
     }
     
     private void UpdateProgress()

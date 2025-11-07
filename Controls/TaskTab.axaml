@@ -8,20 +8,27 @@
              x:DataType="vm:TaskViewModel">
 
         <Grid RowDefinitions="Auto, *" >
-            <Border Grid.Row="0" CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="{Binding Padding}">
+            <Border Grid.Row="0" CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="4" PointerPressed="OnTabPressed">
                 <Grid ColumnDefinitions="*, Auto, Auto,Auto" ColumnSpacing="4">
                     <Grid Grid.Column="0"
                           ColumnDefinitions="Auto, *"
                           ColumnSpacing="0">
-                        <Button Grid.Column="0"
-                                Content="{Binding ShowSubTasksButtonContent}"
-                                Classes="titleBarButton"
-                                Command="{Binding ShowSubTasksCommand}"
-                                IsVisible="{Binding HasSubTasks}" />
+                        <Label Content="&#xE492;"
+                            FontFamily="{DynamicResource IconsBold}"
+                            Foreground="{Binding DeadlineColor}"
+                            IsVisible="{Binding HasDeadline}"
+                            FontSize="20"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding DeadlineCountdown}"
+                            ToolTip.Placement="Top"
+                            ToolTip.VerticalOffset="15"
+                            />
                         <TextBox Grid.Column="1"
-                                 Text="{Binding Title}" />
+                                 Text="{Binding Title}" 
+                                 BorderThickness="0"
+                                 />
                     </Grid>
-                    <Button Grid.Column="1" FontSize="16" FontFamily="{DynamicResource IconsBold}" Content="&#xE13C;">
+                    <Button Grid.Column="1" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xE432;">
                         <Button.Flyout>
                             <Flyout Placement="Top">
                                     <StackPanel>
@@ -33,10 +40,14 @@
                                         <Button FontSize="16"
                                                 Content="&#xE492;"
                                                 FontFamily="{DynamicResource Icons}"
+                                                ToolTip.Tip="{Binding Deadline}" 
+                                                ToolTip.Placement="Top"
+                                                ToolTip.VerticalOffset="15"
                                         >
                                             <Button.Flyout>
                                                 <Flyout>
-                                                    <CalendarDatePicker SelectedDate="{Binding Deadline}"/>
+                                                    <!-- TODO: Create custom calendar that can also select datetime -->
+                                                    <Calendar SelectionMode="SingleDate" SelectedDate="{Binding Deadline}"/>
                                                 </Flyout>
                                             </Button.Flyout>    
                                         </Button>
@@ -68,23 +79,43 @@
                             Content="{Binding ProgressText}"
                     />
                 </Grid>
+                
             </Border>
+            
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding ShowSubTasks}">
                 <ItemsControl ItemsSource="{Binding SubTasks}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="8" Margin="16,4,0,0">
                                 <Grid ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="4">
-                                    <TextBox Grid.Column="0" FontSize="12" Text="{Binding Title}" />
+                                    <Grid Grid.Column="0"
+                                          ColumnDefinitions="Auto, *"
+                                          ColumnSpacing="0">
+                                        <Label Content="&#xE492;"
+                                               FontFamily="{DynamicResource IconsBold}"
+                                               Foreground="{Binding DeadlineColor}"
+                                               IsVisible="{Binding HasDeadline}"
+                                               FontSize="20"
+                                               VerticalAlignment="Center"
+                                               ToolTip.Tip="{Binding DeadlineCountdown}"
+                                               ToolTip.Placement="Top"
+                                               ToolTip.VerticalOffset="15"
+                                        />
+                                        <TextBox Grid.Column="1"
+                                                 Text="{Binding Title}" 
+                                                 BorderThickness="0"
+                                        />
+                                    </Grid>
                                     <Button Grid.Column="1" FontSize="16"
                                             Content="&#xE492;"
                                             FontFamily="{DynamicResource Icons}"
-                                    >
+                                            ToolTip.Tip="{Binding Deadline}" 
+                                            ToolTip.Placement="Top"
+                                            ToolTip.VerticalOffset="15">
                                         <Button.Flyout>
                                             <Flyout>
-                                                <CalendarDatePicker SelectedDate="{Binding Deadline}">
-                                                        
-                                                </CalendarDatePicker>
+                                                <!-- TODO: Create custom calendar that can also select datetime -->
+                                                <Calendar SelectionMode="SingleDate" SelectedDate="{Binding Deadline}"/>
                                             </Flyout>
                                         </Button.Flyout>    
                                     </Button>
