@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
+             xmlns:controls="clr-namespace:PlannerTool.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PlannerTool.Controls.ProjectView"
+             x:DataType="vm:ProjectViewModel"
+             Focusable="True"
+             >
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+        <Grid ColumnDefinitions="*, Auto">
+            <TextBox Classes="title" Text="{Binding Title}"/>
+            <Label Grid.Column="1" FontSize="20" Content="{Binding ProgressText}" VerticalAlignment="Top"></Label>
+        </Grid>
+        <TextBox Grid.Row="1" Classes="description" Text="{Binding Description}" Margin="0,8,0,0"/>
+        <!-- Separator line -->
+        <Border Grid.Row="2" Height="2" Background="Gray" Margin="0,8"/>
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Tasks}">
+                <ItemsControl.DataTemplates>
+                    <!-- Task template -->
+                    <DataTemplate DataType="vm:TaskViewModel">
+                        <controls:TaskTab DataContext="{Binding}" Margin="4"/>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </ScrollViewer>
+        <!-- Add new Task -->
+        <Grid Grid.Row="4" ColumnDefinitions="*, Auto" Margin="8,4,8,4" ColumnSpacing="4" >
+            <TextBox Grid.Column="0" HorizontalAlignment="Stretch"  Text="{Binding NewTaskTitle, Mode=TwoWay}" 
+                     Watermark="Enter task name...">
+                <TextBox.KeyBindings>
+                    <KeyBinding Gesture="Enter" 
+                                Command="{Binding AddTask}" 
+                                CommandParameter="{Binding}" />
+                </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" HorizontalAlignment="Center" Content="+" Width="30"
+                    Command="{Binding AddTask}"
+                    CommandParameter="{Binding}" />
+        </Grid>
+    </Grid>
+</UserControl>

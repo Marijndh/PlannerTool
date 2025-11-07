@@ -1,0 +1,144 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PlannerTool.Controls.TaskTab"
+             x:DataType="vm:TaskViewModel">
+
+        <Grid RowDefinitions="Auto, *" >
+            <Border Grid.Row="0" CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="4" PointerPressed="OnTabPressed">
+                <Grid ColumnDefinitions="*, Auto, Auto,Auto" ColumnSpacing="4">
+                    <Grid Grid.Column="0"
+                          ColumnDefinitions="Auto, *"
+                          ColumnSpacing="0">
+                        <Label Content="&#xE492;"
+                            FontFamily="{DynamicResource IconsBold}"
+                            Foreground="{Binding DeadlineColor}"
+                            IsVisible="{Binding HasDeadline}"
+                            FontSize="20"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding DeadlineCountdown}"
+                            ToolTip.Placement="Top"
+                            ToolTip.VerticalOffset="15"
+                            />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding Title}" 
+                                 BorderThickness="0"
+                                 />
+                    </Grid>
+                    <Button Grid.Column="1" FontSize="16" FontFamily="{DynamicResource Icons}" Content="&#xE432;">
+                        <Button.Flyout>
+                            <Flyout Placement="Top">
+                                    <StackPanel>
+                                        <Button FontSize="16"
+                                                Content="&#xE3D4;"
+                                                FontFamily="{DynamicResource Icons}"
+                                                Command="{Binding AddSubTask}" 
+                                        />
+                                        <Button FontSize="16"
+                                                Content="&#xE492;"
+                                                FontFamily="{DynamicResource Icons}"
+                                                ToolTip.Tip="{Binding Deadline}" 
+                                                ToolTip.Placement="Top"
+                                                ToolTip.VerticalOffset="15"
+                                        >
+                                            <Button.Flyout>
+                                                <Flyout>
+                                                    <!-- TODO: Create custom calendar that can also select datetime -->
+                                                    <Calendar SelectionMode="SingleDate" SelectedDate="{Binding Deadline}"/>
+                                                </Flyout>
+                                            </Button.Flyout>    
+                                        </Button>
+                                        <Button FontSize="16"
+                                                Content="&#xE4A6;"
+                                                FontFamily="{DynamicResource Icons}"
+                                                Command="{Binding DeleteTask}" 
+                                        />
+                                    </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Grid.Column="2"
+                            Command="{Binding ChangeState}"
+                            IsVisible="{Binding !HasSubTasks}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                        <Ellipse Width="16"
+                                 Height="16"
+                                 Fill="{Binding StateColor}" />
+                    </Button>
+                    <Label Grid.Column="2"
+                            IsVisible="{Binding HasSubTasks}"
+                            Background="Transparent"
+                            VerticalAlignment="Center"
+                            Content="{Binding ProgressText}"
+                    />
+                </Grid>
+                
+            </Border>
+            
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding ShowSubTasks}">
+                <ItemsControl ItemsSource="{Binding SubTasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="8" BorderThickness="1" BorderBrush="Gray" Background="Transparent" Padding="8" Margin="16,4,0,0">
+                                <Grid ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="4">
+                                    <Grid Grid.Column="0"
+                                          ColumnDefinitions="Auto, *"
+                                          ColumnSpacing="0">
+                                        <Label Content="&#xE492;"
+                                               FontFamily="{DynamicResource IconsBold}"
+                                               Foreground="{Binding DeadlineColor}"
+                                               IsVisible="{Binding HasDeadline}"
+                                               FontSize="20"
+                                               VerticalAlignment="Center"
+                                               ToolTip.Tip="{Binding DeadlineCountdown}"
+                                               ToolTip.Placement="Top"
+                                               ToolTip.VerticalOffset="15"
+                                        />
+                                        <TextBox Grid.Column="1"
+                                                 Text="{Binding Title}" 
+                                                 BorderThickness="0"
+                                        />
+                                    </Grid>
+                                    <Button Grid.Column="1" FontSize="16"
+                                            Content="&#xE492;"
+                                            FontFamily="{DynamicResource Icons}"
+                                            ToolTip.Tip="{Binding Deadline}" 
+                                            ToolTip.Placement="Top"
+                                            ToolTip.VerticalOffset="15">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <!-- TODO: Create custom calendar that can also select datetime -->
+                                                <Calendar SelectionMode="SingleDate" SelectedDate="{Binding Deadline}"/>
+                                            </Flyout>
+                                        </Button.Flyout>    
+                                    </Button>
+                                    <Button Grid.Column="2" FontSize="16" FontFamily="{DynamicResource Icons}" 
+                                            Content="&#xe4a6;"   
+                                            Command="{Binding DeleteTask }"
+                                            CommandParameter="{Binding}"></Button>
+                                    <Button Grid.Column="3"
+                                            Command="{Binding ChangeState}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                        <Ellipse Width="16"
+                                                 Height="16"
+                                                 Fill="{Binding StateColor}" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+</UserControl>

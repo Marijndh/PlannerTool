@@ -1,22 +1,29 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:avalonia="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+             xmlns:vm="clr-namespace:PlannerTool.ViewModels"
              x:Class="PlannerTool.Controls.TitleBar"
              Height="32"
-             Background="{DynamicResource SecondaryBackground}">
-    <Grid ColumnDefinitions="*,Auto,Auto" Height="32" >
-
+             Background="{DynamicResource SecondaryBackground}"
+             x:DataType="vm:MainWindowViewModel"
+             >
+    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Height="32" >
+        <Button Grid.Column="0"
+                Content="←"
+                Classes="titleBarButton"
+                Command="{Binding CloseProjectCommand}"
+                IsVisible="{Binding CanClosePage}"/>
+        
         <Button
-            Grid.Column="1"
+            Grid.Column="2"
             Content="—"
             Click="OnMinimizeClick"    
             Classes="titleBarButton"
             />
 
         <Button 
-            Grid.Column="2" 
+            Grid.Column="3" 
             Content="✕"
-            Click="OnCloseClick"    
+            Command="{Binding CloseWindowCommand}"   
             Classes="titleBarButton"
             />
     </Grid>
